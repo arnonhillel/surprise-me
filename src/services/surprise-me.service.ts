@@ -1,5 +1,8 @@
 import { SupriseMeModel } from "../models/SurpriseMeMethodeModel";
-
+import { statsController } from "../controllers/stats.controller";
+import { RequestType } from "../models/request-type.enum";
+const db = require("../models/statsModel/index.js");
+const Stats = db.stats;
 
 const fetch = require("node-fetch");
 class SurpriseMeService {
@@ -10,36 +13,24 @@ class SurpriseMeService {
       name = n.toLowerCase();
     }
 
-    randomArray = this.getTrueConArrayMethod(n, bYear);
-    let methodToExec =
+    randomArray = await this.getTrueConArrayMethod(n, bYear);
+    let requestType =
       randomArray[Math.floor(Math.random() * randomArray.length)];
-    console.log("random met:  " + methodToExec);
+    console.log("random met:  " + requestType);
 
     const response = {
-      type: methodToExec,
-      result: "",
+      type: requestType,
+      result: await this.getResultByType(requestType, name),
     };
-
-    switch (methodToExec) {
-      case (methodToExec = "chuck_norris_joke"): {
-        response.result = await this.chuckNorrisJoke();
-        break;
-      }
-      case (methodToExec = "kanye_quote"): {
-        response.result = await this.kanyeWestQuote();
-        break;
-      }
-      case (methodToExec = "name_sum"): {
-        response.result = await this.userNamesSum(name);
-        break;
-      }
-      default: {
-        //statements;
-        break;
-      }
-    }
+    
+    this.saveInDB(requestType);
 
     return response;
+  }
+
+  public async saveInDB(requestType: RequestType) {
+    await Stats.create({ type: requestType });
+    console.log(`Created user`);
   }
 
   /**
@@ -52,9 +43,9 @@ class SurpriseMeService {
 
   public getTrueConArrayMethod(n: string, bYear: string): any[] {
     const surpriseMeMethod: SupriseMeModel = {
-      chuck_norris_joke: false,
-      kanye_quote: false,
-      name_sum: false,
+      [RequestType.CHUCK_NORRIS_JOKE]: false,
+      [RequestType.KANYE_QUOTE]: false,
+      [RequestType.NAME_SUM]: false,
     };
     var randomArray: any[] = [];
     let birthYear;
@@ -67,14 +58,15 @@ class SurpriseMeService {
     }
 
     //init surpriseme
-    surpriseMeMethod.chuck_norris_joke = !!birthYear && birthYear <= 2000;
-    surpriseMeMethod.kanye_quote =
+    surpriseMeMethod[RequestType.CHUCK_NORRIS_JOKE] =
+      !!birthYear && birthYear <= 2000;
+    surpriseMeMethod[RequestType.KANYE_QUOTE] =
       !!birthYear &&
       birthYear > 2000 &&
       !!name &&
       !name.startsWith("a") &&
       !name.startsWith("z");
-    surpriseMeMethod.name_sum = !!name && !name.startsWith("q");
+    surpriseMeMethod[RequestType.NAME_SUM] = !!name && !name.startsWith("q");
 
     for (let [key, value] of Object.entries(surpriseMeMethod)) {
       console.log(key + ": " + value);
@@ -143,6 +135,24 @@ class SurpriseMeService {
     }
     console.log("the sume is: " + sum);
     return (await "") + sum;
+  }
+
+  private async getResultByType(requestType: RequestType, name: string) {
+    switch (requestType) {
+      case RequestType.CHUCK_NORRIS_JOKE:
+        return await this.chuckNorrisJoke();
+
+      case RequestType.KANYE_QUOTE:
+        return await this.kanyeWestQuote();
+
+      case RequestType.NAME_SUM:
+        return await this.userNamesSum(name);
+
+      default: {
+        //statements;
+        break;
+      }
+    }
   }
 }
 
