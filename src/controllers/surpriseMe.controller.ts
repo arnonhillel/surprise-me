@@ -3,9 +3,12 @@ import { surpriseMeService } from "../services/surprise-me.service";
 
 class SurpriseMeController {
   public async getSurprise(req: Request, res: Response) {
-    const a = await surpriseMeService.doRandomMethode()
-    console.log(a);
-    res.status(200).send(a);
+    let name: string = req.query.name + '';
+    let birthYear: string=req.query.birth_year + '';
+    const a = await surpriseMeService.doSurpriseMeMethode(name,birthYear)
+    console.log(a); 
+    console.log(req.query);
+    res.status(200).send(a); 
   }
 }
 
