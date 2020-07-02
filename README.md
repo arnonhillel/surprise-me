@@ -1,4 +1,4 @@
-# surpriseMeTS
+# surprise-me
 
 ## Quick Start:
 
