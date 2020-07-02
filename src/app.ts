@@ -20,9 +20,7 @@ db.mongoose
     useUnifiedTopology: true,
   })
   .then((data: any) => {
-    // console.log(data);
     console.log("Connected to the database!");
-    // initDb(data.model("stats"));
   })
   .catch((err: any) => {
     console.log("Cannot connect to the database!", err);
@@ -31,7 +29,6 @@ db.mongoose
 
   async function initDb(stats: any) { 
   let result = await stats.count();
-  // console.log(result)
   if(result === 0) { 
     stats.create({
       requests: 0,

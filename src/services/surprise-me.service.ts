@@ -7,8 +7,8 @@ const Stats = db.stats;
 const fetch = require("node-fetch");
 class SurpriseMeService {
   public async doSurpriseMeMethod(_name: any, _birthYear: any) {
-    var response = undefined;
-    var randomArray: any[] = [];
+    let response = undefined;
+    let randomArray: any[] = [];
     const birthYear = parseInt(_birthYear);
     const name = _name.toLowerCase();
     randomArray = await this.getArrayWithTrueCondition(name, birthYear);
@@ -30,20 +30,15 @@ class SurpriseMeService {
   }
 
   /**
-   *
    * return array with methods whit True Conditions
-   *
-   * @param n - name from q param
-   * @param bYear birth year from q param
    */
-
   public getArrayWithTrueCondition(name: string, birthYear: number): any[] {
-    var surpriseMeMethod: SupriseMeModel = {
+    let surpriseMeMethod: SupriseMeModel = {
       [RequestType.CHUCK_NORRIS_JOKE]: false,
       [RequestType.KANYE_QUOTE]: false,
       [RequestType.NAME_SUM]: false,
     };
-    var ArrayWithTrueCondition: any[] = [];
+    let ArrayWithTrueCondition: any[] = [];
 
     surpriseMeMethod = this.checkMethodsConditions(
       surpriseMeMethod,
@@ -86,32 +81,32 @@ class SurpriseMeService {
     return randomArray[Math.floor(Math.random() * randomArray.length)];
   }
 
+  
+  /**
+   * If this type was chosen, we should return a random Chuck Norris joke.
+   *	You can use this API to get jokes.
+   *	This type should be chosen only if the user’s birth year is 2000 or before.
+   */
+  public async chuckNorrisJoke() {
+    let url = "https://api.chucknorris.io/jokes/random";
+    let response;
+    await fetch(url)
+    .then((response: any) => response.json())
+    .then((data: any) => {
+      response = data;
+    });
+    if (response && response["value"]) {
+      return (await "") + response["value"];
+    }
+    
+    return await "";
+  }
+  
   /**
    * If this type was chosen, we should return a random Kanye West quote.
    * You can use this API to get quotes.
    * This type should be chosen only if the user’s birth year is after 2000 and the user’s first
    * name doesn’t start with ‘A’ or ‘Z’.
-   */
-
-  public async chuckNorrisJoke() {
-    let url = "https://api.chucknorris.io/jokes/random";
-    let response;
-    await fetch(url)
-      .then((response: any) => response.json())
-      .then((data: any) => {
-        response = data;
-      });
-    if (response && response["value"]) {
-      return (await "") + response["value"];
-    }
-
-    return await "";
-  }
-
-  /**
-   * If this type was chosen, we should return a random Chuck Norris joke.
-   *	You can use this API to get jokes.
-   *	This type should be chosen only if the user’s birth year is 2000 or before.
    */
   public async kanyeWestQuote() {
     let url = "https://api.kanye.rest";

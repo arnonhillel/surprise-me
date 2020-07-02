@@ -6,11 +6,7 @@ import {statsService} from '../services/stats.service'
 class StatsController {
   public async getAll(req: Request, res: Response) {
     let allData = await statsService.getAllData()
-    // console.log(a); 
-    // console.log(res.json);
     res.status(200).send(allData); 
-    
-
   }
 }
 

@@ -5,14 +5,14 @@ const db = require("../models/statsModel/index.js");
 const Stats = db.stats;
 class StatsService {
   public async getAllData(): Promise<statsModel> {
+    const countTotalRequest = await Stats.count();
     return {
-      requests: await Stats.count(),
-      distribution: await this.getDistributionArray(),
+      requests: countTotalRequest,
+      distribution: await this.getDistributionArray(countTotalRequest),
     };
   }
 
-  public async getDistributionArray() {
-    let countTotalRequest = await Stats.count();
+  public async getDistributionArray(countTotalRequest:number) {
     if (countTotalRequest === 0) {
       return [];
     } else {
