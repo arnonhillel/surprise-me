@@ -1,4 +1,4 @@
-import { SupriseMeModel } from "../models/SurpriseMeMethodeModel";
+import { SupriseMeModel } from "../models/SurpriseMeMethodModel";
 import { statsController } from "../controllers/stats.controller";
 import { RequestType } from "../models/request-type.enum";
 const db = require("../models/statsModel/index.js");
@@ -6,25 +6,21 @@ const Stats = db.stats;
 
 const fetch = require("node-fetch");
 class SurpriseMeService {
-  public async doSurpriseMeMethode(n: string, bYear: string) {
+  public async doSurpriseMeMethod(_name: any, _birthYear: any) {
+    var response = undefined
     var randomArray: any[] = [];
-    let name = "";
-    if (n) {
-      name = n.toLowerCase();
-    }
-
-    randomArray = await this.getTrueConArrayMethod(n, bYear);
-    let requestType =
-      randomArray[Math.floor(Math.random() * randomArray.length)];
+    const birthYear = parseInt(_birthYear);
+    const name = _name.toLowerCase();
+    randomArray = await this.getArrayWithTrueCondition(name, birthYear);
+    const requestType = this.getRandomMethod(randomArray);
     console.log("random met:  " + requestType);
-
-    const response = {
-      type: requestType,
-      result: await this.getResultByType(requestType, name),
-    };
-    
+    if(requestType){
+       response = {
+        type: requestType,
+        result: await this.getResultByType(requestType, name),
+      };
+    }
     this.saveInDB(requestType);
-
     return response;
   }
 
@@ -35,46 +31,51 @@ class SurpriseMeService {
 
   /**
    *
-   * return array with valid methode
+   * return array with valid method
    *
    * @param n - name from q param
    * @param bYear birth year from q param
    */
 
-  public getTrueConArrayMethod(n: string, bYear: string): any[] {
-    const surpriseMeMethod: SupriseMeModel = {
+  public getArrayWithTrueCondition(name: string, birthYear: number): any[] {
+    var surpriseMeMethod: SupriseMeModel = {
       [RequestType.CHUCK_NORRIS_JOKE]: false,
       [RequestType.KANYE_QUOTE]: false,
       [RequestType.NAME_SUM]: false,
     };
-    var randomArray: any[] = [];
-    let birthYear;
-    let name = "";
-    if (bYear) {
-      birthYear = parseInt(bYear);
-    }
-    if (n) {
-      name = n.toLowerCase();
-    }
+    var ArrayWithTrueCondition: any[] = [];
+    
+    surpriseMeMethod = this.checkMethodsConditions(surpriseMeMethod,name,birthYear);
 
     //init surpriseme
+    
+    for (let [key, value] of Object.entries(surpriseMeMethod)) {
+      console.log(key + ": " + value);
+      if (value) {
+        ArrayWithTrueCondition.push(key);
+      }
+    }
+    return ArrayWithTrueCondition;
+  }
+
+  public checkMethodsConditions(surpriseMeMethod: SupriseMeModel,name:string,birthYear:number): SupriseMeModel{
     surpriseMeMethod[RequestType.CHUCK_NORRIS_JOKE] =
       !!birthYear && birthYear <= 2000;
+
     surpriseMeMethod[RequestType.KANYE_QUOTE] =
       !!birthYear &&
       birthYear > 2000 &&
       !!name &&
       !name.startsWith("a") &&
       !name.startsWith("z");
+      
     surpriseMeMethod[RequestType.NAME_SUM] = !!name && !name.startsWith("q");
+    return surpriseMeMethod;
 
-    for (let [key, value] of Object.entries(surpriseMeMethod)) {
-      console.log(key + ": " + value);
-      if (value) {
-        randomArray.push(key);
-      }
-    }
-    return randomArray;
+  }
+
+  public getRandomMethod(randomArray: any) {
+    return randomArray[Math.floor(Math.random() * randomArray.length)];
   }
 
   /**

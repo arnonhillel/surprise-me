@@ -7,7 +7,16 @@ class StatsService {
   public async getAllData(): Promise<statsModel> {
     return {
       requests: await Stats.count(),
-      distribution: [
+      distribution: await this.getDistributionArray()
+    };
+  }
+
+  public async getDistributionArray(){
+    let countTotalRequest = await Stats.count()
+    if(countTotalRequest === 0){
+      return [];
+    }else{
+      return [
         {
           type: RequestType.CHUCK_NORRIS_JOKE,
           count: await Stats.count({ type: RequestType.CHUCK_NORRIS_JOKE }),
@@ -20,9 +29,19 @@ class StatsService {
           type: RequestType.NAME_SUM,
           count: await Stats.count({ type: RequestType.NAME_SUM }),
         },
-      ],
-    };
+      ]
+    }
   }
+
+
+
+
+
+
+
+
+
+
 }
 
 export const statsService = new StatsService();

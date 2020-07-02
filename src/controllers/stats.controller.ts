@@ -5,10 +5,10 @@ import {statsService} from '../services/stats.service'
 
 class StatsController {
   public async getAll(req: Request, res: Response) {
-    let a = await statsService.getAllData()
+    let allData = await statsService.getAllData()
     // console.log(a); 
     // console.log(res.json);
-    res.status(200).send(a); 
+    res.status(200).send(allData); 
     
 
   }
