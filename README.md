@@ -1,14 +1,21 @@
 # surpriseMeTS
 
+## Quick Start:
 
-install mongo server - https://docs.mongodb.com/manual/installation/
+install mongo server:
 
-Quick Start:
+```bash
+ $ https://docs.mongodb.com/manual/installation/
+```
 
 Install dependencies:
 
+```bash
 $ npm install
+```
 
 Start the server:
 
+```bash
 $ npm start
+```
