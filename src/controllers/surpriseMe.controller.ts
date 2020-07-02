@@ -5,7 +5,7 @@ class SurpriseMeController {
   public async getSurprise(req: Request, res: Response) {
     let name = req.query.name;
     let birthYear = req.query.birth_year;
-    console.log(`naem : ${name} birth year : ${birthYear}`);
+    console.log(`name : ${name} birth year : ${birthYear}`);
     if (!!name && !!birthYear) {
       const response = await surpriseMeService.doSurpriseMeMethod(
         name,
@@ -17,13 +17,13 @@ class SurpriseMeController {
           .send("No surprise for you!");
       }
       console.log(response);
-      console.log(req.query);
+      // console.log(req.query);
       res.status(200).send(response);
     }
     else {
       res
-        .status(400) // HTTP status 404: NotFound
-        .send("name and birth_year are mandatory");
+        .status(400) // HTTP status 400: NotFound
+        .send("Name and year of birth are mandatory fields");
     }
   }
 }

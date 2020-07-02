@@ -8,21 +8,3 @@ export interface distributionItem {
   type: RequestType;
   count: number;
 }
-
-// {
-//     "requests": 27,
-//     "distribution": [
-//         {
-//             "type": "chuck-norris-joke",
-//             "count": 12
-//         },
-//         {
-//             "type": "kanye-quote",
-//             "count": 9
-//         },
-//         {
-//             "type": "name-sum",
-//             "count": 6
-//         }
-//     ]
-// }

@@ -7,15 +7,15 @@ const Stats = db.stats;
 const fetch = require("node-fetch");
 class SurpriseMeService {
   public async doSurpriseMeMethod(_name: any, _birthYear: any) {
-    var response = undefined
+    var response = undefined;
     var randomArray: any[] = [];
     const birthYear = parseInt(_birthYear);
     const name = _name.toLowerCase();
     randomArray = await this.getArrayWithTrueCondition(name, birthYear);
     const requestType = this.getRandomMethod(randomArray);
-    console.log("random met:  " + requestType);
-    if(requestType){
-       response = {
+    console.log("Selected method:  " + requestType);
+    if (requestType) {
+      response = {
         type: requestType,
         result: await this.getResultByType(requestType, name),
       };
@@ -26,12 +26,12 @@ class SurpriseMeService {
 
   public async saveInDB(requestType: RequestType) {
     await Stats.create({ type: requestType });
-    console.log(`Created user`);
+    console.log(`Request saved`);
   }
 
   /**
    *
-   * return array with valid method
+   * return array with methods whit True Conditions
    *
    * @param n - name from q param
    * @param bYear birth year from q param
@@ -44,13 +44,17 @@ class SurpriseMeService {
       [RequestType.NAME_SUM]: false,
     };
     var ArrayWithTrueCondition: any[] = [];
-    
-    surpriseMeMethod = this.checkMethodsConditions(surpriseMeMethod,name,birthYear);
+
+    surpriseMeMethod = this.checkMethodsConditions(
+      surpriseMeMethod,
+      name,
+      birthYear
+    );
 
     //init surpriseme
-    
+
     for (let [key, value] of Object.entries(surpriseMeMethod)) {
-      console.log(key + ": " + value);
+      // console.log(key + ": " + value);
       if (value) {
         ArrayWithTrueCondition.push(key);
       }
@@ -58,20 +62,24 @@ class SurpriseMeService {
     return ArrayWithTrueCondition;
   }
 
-  public checkMethodsConditions(surpriseMeMethod: SupriseMeModel,name:string,birthYear:number): SupriseMeModel{
+  public checkMethodsConditions(
+    surpriseMeMethod: SupriseMeModel,
+    name: string,
+    birthYear: number
+  ): SupriseMeModel {
+    //CHUCK_NORRIS_JOKE Condition
     surpriseMeMethod[RequestType.CHUCK_NORRIS_JOKE] =
       !!birthYear && birthYear <= 2000;
-
+    //KANYE QUOTE Condition
     surpriseMeMethod[RequestType.KANYE_QUOTE] =
       !!birthYear &&
       birthYear > 2000 &&
       !!name &&
       !name.startsWith("a") &&
       !name.startsWith("z");
-      
+    //NAME SUM Condition
     surpriseMeMethod[RequestType.NAME_SUM] = !!name && !name.startsWith("q");
     return surpriseMeMethod;
-
   }
 
   public getRandomMethod(randomArray: any) {
@@ -134,7 +142,7 @@ class SurpriseMeService {
       const character = name.charAt(i);
       sum += character.charCodeAt(0) - 97 + 1;
     }
-    console.log("the sume is: " + sum);
+    // console.log("the sume is: " + sum);
     return (await "") + sum;
   }
 
@@ -150,7 +158,6 @@ class SurpriseMeService {
         return await this.userNamesSum(name);
 
       default: {
-        //statements;
         break;
       }
     }
