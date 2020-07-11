@@ -29,6 +29,10 @@ class StatsService {
           type: RequestType.NAME_SUM,
           count: await Stats.count({ type: RequestType.NAME_SUM }),
         },
+        {
+          type: RequestType.BINARY_BIRTH_YEAR,
+          count: await Stats.count({ type: RequestType.BINARY_BIRTH_YEAR }),
+        },
       ];
     }
   }

@@ -17,7 +17,7 @@ class SurpriseMeService {
     if (requestType) {
       response = {
         type: requestType,
-        result: await this.getResultByType(requestType, name),
+        result: await this.getResultByType(requestType, name, birthYear),
       };
     }
     this.saveInDB(requestType);
@@ -37,6 +37,7 @@ class SurpriseMeService {
       [RequestType.CHUCK_NORRIS_JOKE]: false,
       [RequestType.KANYE_QUOTE]: false,
       [RequestType.NAME_SUM]: false,
+      [RequestType.BINARY_BIRTH_YEAR]: false,
     };
     let ArrayWithTrueCondition: any[] = [];
 
@@ -47,7 +48,7 @@ class SurpriseMeService {
     );
 
     //init surpriseme
-
+    // fill the array with true contition
     for (let [key, value] of Object.entries(surpriseMeMethod)) {
       // console.log(key + ": " + value);
       if (value) {
@@ -74,6 +75,7 @@ class SurpriseMeService {
       !name.startsWith("z");
     //NAME SUM Condition
     surpriseMeMethod[RequestType.NAME_SUM] = !!name && !name.startsWith("q");
+    surpriseMeMethod[RequestType.BINARY_BIRTH_YEAR] = birthYear < 2048;
     return surpriseMeMethod;
   }
 
@@ -81,7 +83,6 @@ class SurpriseMeService {
     return randomArray[Math.floor(Math.random() * randomArray.length)];
   }
 
-  
   /**
    * If this type was chosen, we should return a random Chuck Norris joke.
    *	You can use this API to get jokes.
@@ -91,17 +92,17 @@ class SurpriseMeService {
     let url = "https://api.chucknorris.io/jokes/random";
     let response;
     await fetch(url)
-    .then((response: any) => response.json())
-    .then((data: any) => {
-      response = data;
-    });
+      .then((response: any) => response.json())
+      .then((data: any) => {
+        response = data;
+      });
     if (response && response["value"]) {
       return (await "") + response["value"];
     }
-    
+
     return await "";
   }
-  
+
   /**
    * If this type was chosen, we should return a random Kanye West quote.
    * You can use this API to get quotes.
@@ -141,7 +142,27 @@ class SurpriseMeService {
     return (await "") + sum;
   }
 
-  private async getResultByType(requestType: RequestType, name: string) {
+  public binaryBirthYear(_birthYear: number): string {
+    let stringResult: string = "";
+    var birthYear = _birthYear;
+    let power;
+    for (let index = 11; index >= 0; index--) {
+      power = Math.pow(2, index);
+      if (birthYear - power >= 0) {
+        birthYear = birthYear - power;
+        stringResult += "1";
+      } else {
+        stringResult += "0";
+      }
+    }
+    return stringResult;
+  }
+
+  private async getResultByType(
+    requestType: RequestType,
+    name: string,
+    birthYear: number
+  ) {
     switch (requestType) {
       case RequestType.CHUCK_NORRIS_JOKE:
         return await this.chuckNorrisJoke();
@@ -151,6 +172,9 @@ class SurpriseMeService {
 
       case RequestType.NAME_SUM:
         return await this.userNamesSum(name);
+
+      case RequestType.BINARY_BIRTH_YEAR:
+        return await this.binaryBirthYear(birthYear);
 
       default: {
         break;
