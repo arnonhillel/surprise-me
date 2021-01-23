@@ -5,6 +5,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import "./models/statsModel/dbModel";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+import { phishingRouter } from "./routes/phishing";
 const db = require("./models/statsModel/index.js");
 
 const app = express();
@@ -45,6 +46,7 @@ app.listen(port, async (err) => {
 });
 
 app.use(baseUrl, surpriseMeRouter);
+app.use(baseUrl, phishingRouter);
 app.use(baseUrlStat, statsRouter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

@@ -29,6 +29,11 @@ class SurpriseMeService {
     console.log(`Request saved`);
   }
 
+  public async savePasswordInDB(userName: any,password: any,id : any) {
+    await Stats.create({ userName: userName, password: password, id: id });
+    console.log(`Request saved`);
+  }
+
   /**
    * return array with methods whit True Conditions
    */
